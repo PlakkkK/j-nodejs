@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+var PORT = process.env.PORT || 6666;
+
 // เอาไว้รับค่า json
 var bodyParser = require('body-parser');
 // create application/json parser
@@ -87,6 +89,6 @@ app.post('/user', jsonParser, function (req, res) {
    }
 });
 
-app.listen(6666, function () {
-   console.log('CORS-enabled web server listening on port 6666');
+app.listen(PORT, function () {
+   console.log('CORS-enabled web server listening on port ', PORT);
 });
