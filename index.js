@@ -23,7 +23,6 @@ const options = {
    //    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
    //    family: 4, // Use IPv4, skip trying IPv6
    useNewUrlParser: true,
-   //    useFindAndModify: false,
    useUnifiedTopology: true,
 };
 mongoose.connect(uri, options);
