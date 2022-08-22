@@ -39,7 +39,7 @@ connection.once('open', () => {
    console.log('Connected Database Successfully');
 });
 
-app.post('/user', jsonParser, function (req, res) {
+app.get('/user', jsonParser, function (req, res) {
    const customerSchema = new Schema({
       name: {
          type: String,
