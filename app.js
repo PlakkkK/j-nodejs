@@ -8,9 +8,9 @@ var bodyParser = require('body-parser');
 // create application/json parser
 var jsonParser = bodyParser.json();
 
-//เอาไว้เข้ารหัส password
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+// //เอาไว้เข้ารหัส password
+// const bcrypt = require('bcrypt');
+// const saltRounds = 10;
 
 // jwt json web token เอาไว้สำหรับ object แปลงเป็น token
 var jwt = require('jsonwebtoken');
