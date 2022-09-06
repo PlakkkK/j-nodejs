@@ -1,1 +1,1 @@
-web: --port=$PORT --no-browser npm run dev
+web: npm run deploy
