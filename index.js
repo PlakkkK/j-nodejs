@@ -1,8 +1,6 @@
 var express = require('express');
 var app = express();
 
-let PORT = process.env.PORT || 6666;
-
 //เอาไว้เข้ารหัส password
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -97,6 +95,6 @@ app.post('/register', jsonParser, (req, res) => {
    });
 });
 
-app.listen(PORT, function (req, res) {
+app.listen(process.env.PORT || 6666, function (req, res) {
    console.log('Server is started on port ', PORT);
 });
