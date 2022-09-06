@@ -1,4 +1,1 @@
-web: npm i
-web: npm uninstall bcrypt
-web: npm install bcrypt
-web: npm run dev
+web: voila --port=$PORT --no-browser npm run dev
