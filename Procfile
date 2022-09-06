@@ -1,1 +1,1 @@
-web: voila --port=$PORT --no-browser npm run dev
+web: --port=$PORT --no-browser npm run dev
