@@ -4,8 +4,8 @@
    "description": "",
    "main": "index.js",
    "scripts": {
-      "deploy": "node index.js",
-      "dev": "npx nodemon index.js",
+      "deploy": "node app.js",
+      "dev": "npx nodemon app.js",
       "test": "echo \"Error: no test specified\" && exit 1"
    },
    "author": "",

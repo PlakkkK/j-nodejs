@@ -1,72 +1,53 @@
 var express = require('express');
 var app = express();
 
-let PORT = process.env.PORT || 6666;
+//เอาไว้เข้ารหัส password
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
+
+// jwt json web token เอาไว้สำหรับ object แปลงเป็น token
+var jwt = require('jsonwebtoken');
+var secret = 'shhhhh';
+
+// import file .env
+require('dotenv').config();
 
 // เอาไว้รับค่า json
 var bodyParser = require('body-parser');
 // create application/json parser
 var jsonParser = bodyParser.json();
 
-// //เอาไว้เข้ารหัส password
-// const bcrypt = require('bcrypt');
-// const saltRounds = 10;
+// เชื่อมต่อกับ mongo atles
+const { MongoClient } = require('mongodb');
+const client = new MongoClient(process.env.ATLAS_URI);
+// database name
+const database = client.db('resume');
 
-// jwt json web token เอาไว้สำหรับ object แปลงเป็น token
-var jwt = require('jsonwebtoken');
-var secret = 'shhhhh';
+app.get('/', (req, res) => {
+   res.send('Hello, I am Working');
+});
 
-// เชื่อมต่อ database sql
-// const mysql = require('mysql2');
-// const connection = mysql.createConnection({
-//    host: 'localhost',
-//    user: 'root',
-//    database: 'mydb',
-// });
-
-app.post('/register', jsonParser, function (req, res) {
-   let email = req.body.email;
-   let fname = req.body.fname;
-   let lname = req.body.lname;
-
-   bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-      if (err) {
-         res.json({ status: false, message: err });
+app.post('/login', jsonParser, async function (req, res) {
+   try {
+      const users = database.collection('users');
+      const user = await users.findOne({ email: req.body.email });
+      if (user) {
+         bcrypt.compare(req.body.password, user.password, function (err2, isLogin) {
+            if (isLogin) {
+               res.json({ status: true, message: 'login success', token: jwt.sign(user, secret, { expiresIn: '1h' }) });
+            } else {
+               res.json({ status: false, message: 'login Fail' });
+            }
+         });
       } else {
-         //  connection.execute('INSERT INTO users (email, password, fname, lname) VALUES (?, ?, ?, ?)', [email, hash, fname, lname], function (err2, results, fields) {
-         //     if (err2) {
-         //        res.json({ status: false, message: err2 });
-         //        return;
-         //     } else {
-         res.json({ status: true, message: 'ok' });
-         //     }
-         //  });
+         res.json({ status: false, message: 'user not found.' });
       }
-   });
+   } catch (err) {
+      res.json({ status: false, message: err });
+   }
 });
 
-app.post('/login', jsonParser, function (req, res) {
-   res.json({ status: true, message: req.body.email });
-   //    connection.execute('SELECT * FROM users WHERE email=?', [req.body.email], function (err, results, fields) {
-   //       if (err) {
-   //          res.json({ status: false, message: err });
-   //       } else {
-   //          if (results.length == 0) {
-   //             res.json({ status: false, message: 'user not found' });
-   //          } else {
-   //             bcrypt.compare(req.body.password, results[0].password, function (err2, isLogin) {
-   //                if (isLogin) {
-   //                   res.json({ status: true, message: 'login success', token: jwt.sign(results[0], secret, { expiresIn: '1h' }) });
-   //                } else {
-   //                   res.json({ status: false, message: 'login Fail' });
-   //                }
-   //             });
-   //          }
-   //       }
-   //    });
-});
-
-app.post('/user', jsonParser, function (req, res) {
+app.post('/user', jsonParser, async function (req, res) {
    try {
       const token = req.headers.authorization;
       if (token) {
@@ -77,7 +58,7 @@ app.post('/user', jsonParser, function (req, res) {
             fname: decoded.fname,
             lname: decoded.lname,
          };
-         res.json(data);
+         res.json({ status: true, message: 'ok', data });
       } else {
          res.json({ status: false, message: 'Token is not define' });
       }
@@ -90,6 +71,34 @@ app.post('/user', jsonParser, function (req, res) {
    }
 });
 
-app.listen(PORT, function () {
-   console.log('CORS-enabled web server listening on port ', PORT);
+app.post('/register', jsonParser, async (req, res) => {
+   bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
+      if (err) {
+         res.json({ status: false, message: err });
+      } else {
+         try {
+            const users = database.collection('users');
+            const user = await users.findOne({ email: req.body.email });
+            if (user) {
+               res.json({ status: false, message: 'email duiplicate' });
+            } else {
+               const insert_user = await users.insertOne({
+                  email: req.body.email,
+                  fname: req.body.fname,
+                  lname: req.body.lname,
+                  password: hash,
+                  create_date: new Date(),
+               });
+               res.json({ status: true, message: 'ok', data: insert_user });
+            }
+         } catch (err) {
+            res.json({ status: false, message: err });
+         }
+      }
+   });
+});
+
+const PORT = process.env.PORT || 6666;
+app.listen(PORT, function (req, res) {
+   console.log('Server is started on port ', PORT);
 });
