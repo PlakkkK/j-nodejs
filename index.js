@@ -4,7 +4,7 @@ var app = express();
 let PORT = process.env.PORT || 6666;
 
 //เอาไว้เข้ารหัส password
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 // jwt json web token เอาไว้สำหรับ object แปลงเป็น token
