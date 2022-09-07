@@ -4,8 +4,8 @@
    "description": "",
    "main": "index.js",
    "scripts": {
-      "deploy": "node app.js",
-      "dev": "npx nodemon app.js",
+      "deploy": "node auth.js",
+      "dev": "npx nodemon auth.js",
       "test": "echo \"Error: no test specified\" && exit 1"
    },
    "author": "",
