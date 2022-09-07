@@ -1,5 +1,10 @@
 # j-nodejs
 api for plak project
 
-npm i
-npm run dev
+## Build Setup
+
+# install dependencies
+$ npm install
+
+# serve with hot reload at localhost:6666
+$ npm run dev
